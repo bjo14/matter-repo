@@ -62,7 +62,7 @@ var boxA = Bodies.rectangle(400, 200, 80, 80);
 var boxB = Bodies.rectangle(450, 50, 80, 80);
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 var shape = Bodies.polygon(300, 120, 5, 50, shapeoptions);
-var shape2 = Bodies.circle(350, 250, 75);
+var shape2 = Bodies.circle(350, 250, 85);
 var mouse = MouseConstraint.create(engine);
 
 boxA.isStatic = true;
