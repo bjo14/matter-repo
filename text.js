@@ -57,6 +57,49 @@ let shapeoptions = {
     frictionAir: 0.4
 }
 
+// categories
+var categories = 0x0001,
+    pinkCategory = 0x0003,
+    blueCategory = 0x0005;
+
+var pinkColor = '#ffc0cb',
+    blueColor = '#add8e6';
+
+Composite.add(engine.world, Composites.stack(100, 150, 3, 3, 12, 12, function(x, y, row){
+        var category = pinkCategory, color = pinkColor;
+
+//add blueColor
+        return Bodies.polygon(x, y, 10, 45, {
+            collisionFilter: {
+                category: category
+            },
+            render: {
+                strokeStyle: color,
+                fillStyle: 'fill',
+                lineWidth: 3
+            }
+        })
+
+}));
+
+Composite.add(engine.world, Bodies.polygon(150, 60, 10, 45, {
+    collisionFilter: {
+        mask: categories | pinkCategory
+    },
+    render: {
+        fillStyle: pinkColor
+    }
+}));
+
+Composite.add(engine.world, Bodies.polygon(150, 60, 10, 45, {
+    collisionFilter: {
+        mask: categories | blueCategory
+    },
+    render: {
+        fillStyle: blueColor
+    }
+}));
+
 // create two boxes and a ground
 var boxA = Bodies.rectangle(400, 200, 80, 80);
 var boxB = Bodies.rectangle(450, 50, 80, 80);
@@ -71,6 +114,10 @@ boxA.isStatic = true;
 Composite.add(engine.world, [boxA, boxB, ground, shape, shape2, mouse]);
 
 frameRate = 1000 / 60;
+
+// Events.on(MouseConstraint, 'enddrag', body,{
+   
+// });
 
 // Create game loop (because Matter.Runner doesn't work with node.js)
 setInterval(function () {
