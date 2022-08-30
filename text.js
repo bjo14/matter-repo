@@ -4,7 +4,10 @@ var Engine = Matter.Engine,
     Runner = Matter.Runner,
     Bodies = Matter.Bodies,
     Composite = Matter.Composite,
-    MouseConstraint = Matter.MouseConstraint;
+    Composites = Matter.Composites,
+    MouseConstraint = Matter.MouseConstraint,
+    Events = Matter.Events,
+    Mouse = Matter.Mouse;
 
 // create an engine
 var engine = Engine.create();
@@ -106,18 +109,36 @@ var boxB = Bodies.rectangle(450, 50, 80, 80);
 var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 var shape = Bodies.polygon(300, 120, 5, 50, shapeoptions);
 var shape2 = Bodies.circle(350, 250, 85);
-var mouse = MouseConstraint.create(engine);
+
+const mouse = Mouse.create(canvas);
+const mouseConstraintOptions = {
+    mouse: mouse,
+    constraint: {
+        stiffness: 0.2,
+        render: {
+            visible: false
+        }
+    }
+}
+
+var mouseConstraint = MouseConstraint.create(engine, mouseConstraintOptions);
 
 boxA.isStatic = true;
 
 // add all of the bodies to the world
-Composite.add(engine.world, [boxA, boxB, ground, shape, shape2, mouse]);
+Composite.add(engine.world, [boxA, boxB, ground, shape, shape2, mouseConstraint]);
 
 frameRate = 1000 / 60;
 
-// Events.on(MouseConstraint, 'enddrag', body,{
-   
-// });
+Events.on(mouseConstraint, 'enddrag', function (event){
+    event.body.isStatic = true
+});
+
+Events.on(mouseConstraint, 'startdrag', function (event) {
+    if (event.body !== ground) {
+        event.body.isStatic = false;
+    }
+});
 
 // Create game loop (because Matter.Runner doesn't work with node.js)
 setInterval(function () {
