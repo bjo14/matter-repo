@@ -1,5 +1,3 @@
-//var <- const/ let 
-
 // module aliases
 let Engine = Matter.Engine
 let Bodies = Matter.Bodies
@@ -14,10 +12,10 @@ Matter.use(
     );
 
 // create an engine
-var engine = Engine.create();
+const engine = Engine.create();
 
 //gravity
-var world = engine.world; //change engine.world -> world in code
+const world = engine.world; 
 world.gravity.scale = 0;
 
 let attract = true;
@@ -33,7 +31,7 @@ canvas.height = 650;
 
 //render function
 let render = function renderFunction() {
-    let bodies = Composite.allBodies(engine.world);
+    let bodies = Composite.allBodies(world);
 
     window.requestAnimationFrame(render);
 
@@ -62,7 +60,7 @@ let render = function renderFunction() {
 };
 render();
 
-var shape1options = {
+let shape1options = {
     plugin: {
         attractors: [
           function(body2, mainBody) {
@@ -84,9 +82,9 @@ var shape1options = {
 }
 
 // create two bodies and a ground
-var shape1 = Bodies.circle(350, 250, 45, shape1options);
-var shape2 = Bodies.circle(250, 230, 55);
-var ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+let shape1 = Bodies.circle(350, 250, 45, shape1options);
+let shape2 = Bodies.circle(250, 230, 55);
+let ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
 //mouse control
 const mouse = Mouse.create(canvas);
@@ -99,10 +97,10 @@ const mouseConstraintOptions = {
         }
     }
 }
-var mouseConstraint = MouseConstraint.create(engine.world, mouseConstraintOptions);
+let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
 // add bodies to the world
-Composite.add(engine.world, [shape1, shape2, ground, mouseConstraint]);
+Composite.add(world, [shape1, shape2, ground, mouseConstraint]);
 
 Events.on(engine, 'afterUpdate', function() {
     if (!mouse.position.x) {
