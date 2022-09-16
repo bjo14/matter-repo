@@ -13,11 +13,12 @@ Matter.use(
 
 // create an engine
 const engine = Engine.create();
+const world = engine.world;
 
-//gravity
-const world = engine.world; 
+//gravity 
 world.gravity.scale = 0;
 
+//boolean that determines attractor or repeller
 let attract = true;
 
 //create canvas
@@ -39,6 +40,7 @@ let render = function renderFunction() {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+    //rendering canvas and bodies
     ctx.beginPath();
 
     for (let i = 0; i < bodies.length; i += 1) {
@@ -60,6 +62,7 @@ let render = function renderFunction() {
 };
 render();
 
+//attracting/repelling boolean function
 let shape1options = {
     plugin: {
         attractors: [
