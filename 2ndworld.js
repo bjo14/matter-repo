@@ -1,4 +1,4 @@
-// module aliases
+// Module aliases
 let Engine = Matter.Engine
 let Bodies = Matter.Bodies
 let Composite = Matter.Composite
@@ -11,26 +11,26 @@ Matter.use(
     'matter-attractors' // PLUGIN_NAME
     );
 
-// create an engine
+// Create an engine
 const engine = Engine.create();
 const world = engine.world;
 
-//gravity 
+// Gravity 
 world.gravity.scale = 0;
 
-//boolean that determines attractor or repeller
+// Boolean that determines attractor or repeller
 let attract = true;
 
-//create canvas
+// Create canvas
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 document.body.appendChild(canvas);
 
-// canvas size
+// Canvas size
 canvas.width = 850;
 canvas.height = 650;
 
-//render function
+// Render function
 let render = function renderFunction() {
     let bodies = Composite.allBodies(world);
 
@@ -40,7 +40,7 @@ let render = function renderFunction() {
     ctx.fillStyle = 'black';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    //rendering canvas and bodies
+    // Rendering canvas and bodies
     ctx.beginPath();
 
     for (let i = 0; i < bodies.length; i += 1) {
@@ -62,34 +62,34 @@ let render = function renderFunction() {
 };
 render();
 
-//attracting/repelling boolean function
+// Attracting/repelling boolean function
 let shape1options = {
     plugin: {
         attractors: [
-          function(body2, mainBody) {
+          function(otherBody, mainBody) {
             if (attract) {
-                bodyA = body2;
+                bodyA = otherBody;
                 bodyB = mainBody;
             }
             else {
                 bodyA = mainBody;
-                bodyB = body2;
+                bodyB = otherBody;
             }
             return {
-              x: (bodyA.position.x - bodyB.position.x) * 1e-5,
-              y: (bodyA.position.y - bodyB.position.y) * 1e-5,
+              x: (bodyA.position.x - bodyB.position.x) * 0.000005,
+              y: (bodyA.position.y - bodyB.position.y) * 0.000005,
             };
           }
         ]
       }
 }
 
-// create two bodies and a ground
+// Create two bodies and a ground
 let shape1 = Bodies.circle(350, 250, 45, shape1options);
 let shape2 = Bodies.circle(250, 230, 55);
 let ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
 
-//mouse control
+// Mouse control
 const mouse = Mouse.create(canvas);
 const mouseConstraintOptions = {
     mouse: mouse,
@@ -102,7 +102,7 @@ const mouseConstraintOptions = {
 }
 let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
-// add bodies to the world
+// Add bodies to the world
 Composite.add(world, [shape1, shape2, ground, mouseConstraint]);
 
 Events.on(engine, 'afterUpdate', function() {
@@ -110,7 +110,7 @@ Events.on(engine, 'afterUpdate', function() {
         return;
     }
 
-    // smoothly move the attractor body towards the mouse
+    // Smoothly move the attractor body towards the mouse
     Body.translate(shape1, {
         x: (mouse.position.x - shape1.position.x) * 0.25,
         y: (mouse.position.y - shape1.position.y) * 0.25
