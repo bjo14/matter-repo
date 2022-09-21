@@ -21,6 +21,18 @@ world.gravity.scale = 0;
 // Boolean that determines attractor or repeller
 let attract = true;
 
+const button1 = document.getElementById('attracts');
+const button2 = document.getElementById('repels');
+
+button1.addEventListener('click', function () {
+    attract = true;
+})
+
+button2.addEventListener('click', function () {
+    attract = false;
+})
+
+
 // Create canvas
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
@@ -63,6 +75,15 @@ let render = function renderFunction() {
 render();
 
 // Attracting/repelling boolean function
+
+let sliderValue = document.getElementById('mySlider');
+
+let attractStrength = sliderValue.value;
+
+sliderValue.addEventListener('change', function () {
+    attractStrength = sliderValue.value;
+})
+
 let shape1options = {
     plugin: {
         attractors: [
@@ -76,18 +97,25 @@ let shape1options = {
                 bodyB = otherBody;
             }
             return {
-              x: (bodyA.position.x - bodyB.position.x) * 0.000005,
-              y: (bodyA.position.y - bodyB.position.y) * 0.000005,
+              x: (bodyA.position.x - bodyB.position.x) * (0.000001 * attractStrength),
+              y: (bodyA.position.y - bodyB.position.y) * (0.000001 * attractStrength),
             };
           }
+
         ]
       }
 }
 
+
+//add border
+
 // Create two bodies and a ground
 let shape1 = Bodies.circle(350, 250, 45, shape1options);
 let shape2 = Bodies.circle(250, 230, 55);
-let ground = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
+let ground = Bodies.rectangle(425, 610, 850, 60, { isStatic: true });
+let border1 = Bodies.rectangle(425,5, 850, 60, { isStatic: true });
+let border2 = Bodies.rectangle(25, 306, 80, 542, { isStatic: true });
+let border3 = Bodies.rectangle(835, 306, 80, 542, { isStatic: true });
 
 // Mouse control
 const mouse = Mouse.create(canvas);
@@ -103,7 +131,7 @@ const mouseConstraintOptions = {
 let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
 // Add bodies to the world
-Composite.add(world, [shape1, shape2, ground, mouseConstraint]);
+Composite.add(world, [shape1, shape2, ground, border1, border2, border3, mouseConstraint]);
 
 Events.on(engine, 'afterUpdate', function() {
     if (!mouse.position.x) {
