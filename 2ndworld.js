@@ -74,7 +74,7 @@ let render = function renderFunction() {
 };
 render();
 
-// Attracting/repelling boolean function
+// Attracting/repelling button and slider controls
 
 let sliderValue = document.getElementById('mySlider');
 
@@ -105,9 +105,6 @@ let shape1options = {
         ]
       }
 }
-
-
-//add border
 
 // Create two bodies and a ground
 let shape1 = Bodies.circle(350, 250, 45, shape1options);
