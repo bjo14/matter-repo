@@ -80,7 +80,7 @@ let sliderValue = document.getElementById('mySlider');
 
 let attractStrength = sliderValue.value;
 
-sliderValue.addEventListener('change', function () {
+sliderValue.addEventListener('input', function () {
     attractStrength = sliderValue.value;
 })
 
