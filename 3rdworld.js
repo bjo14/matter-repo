@@ -29,16 +29,6 @@ function setup() {
     world = engine.world;
     //Engine.run(engine);
   
-    
-//   function keyPressed() {
-//     if (key == ' ') {
-//     }
-//   }
-  
-//   function mouseDragged() {
-//     circles.push(new Circle(mouseX, mouseY, random(5, 10)));
-//   }
-  
   function draw() {
     background(51);
     Engine.update(engine);
@@ -134,8 +124,6 @@ function lj_pot(body1, body2) {
     return distance * epsilon * attractStrength
 }
 
-
-
 let shape1options = {
     plugin: {
         attractors: [
@@ -159,11 +147,6 @@ let shape1options = {
       }
 }
 
-
-
-
-
-
 //1st way of chain
 var group = Body.nextGroup(true);
 var stack1 = Composites.stack(5,6,1,7,0,0.5, function(x, y){
@@ -185,40 +168,21 @@ group = Body.nextGroup(true);
 
 //2nd way of chain
 
+//Fix the first particle in the space, with connected particles
+
 function Particle(x, y, r, fixed) {
     var options = {
       friction: 0,
       restitution: 0.95,
       isStatic: fixed
+      
     };
     this.body = Bodies.circle(x, y, r, options);
     this.r = r;
     World.add(world, this.body);
-  
-    this.isOffScreen = function() {
-      var pos = this.body.position;
-      return pos.y > height + 100;
-    };
-  
-    this.removeFromWorld = function() {
-      World.remove(world, this.body);
-    };
-  
-    this.show = function() {
-      var pos = this.body.position;
-      var angle = this.body.angle;
-      push();
-      translate(pos.x, pos.y);
-      rotate(angle);
-      rectMode(CENTER);
-      strokeWeight(1);
-      stroke(255);
-      fill(127);
-      ellipse(0, 0, this.r * 2);
-      pop();
-    };
   }
 
+//Loop that creates a set of particles
 
   var prev = null;
   for (var x = 200; x < 400; x += 20) {
@@ -228,8 +192,9 @@ function Particle(x, y, r, fixed) {
     }
    
     var p = new Particle(x, 100, 5, fixed);
-    // var p2 = new Particle(200, 150, 10);
     particles.push(p);
+
+//Connecting the particles to each other
 
     if (prev) {
       var options = {
@@ -237,27 +202,27 @@ function Particle(x, y, r, fixed) {
         bodyB: prev.body,
         length: 20,
         stiffness: 0.4, 
-        plugin: {
-            attractors: [
-              function(p.body, prev.body) {
-                if (attract) {
-                    bodyA = p.body;
-                    bodyB = prev.body;
-                }
-                else {
-                    bodyA = prev.body,
-                    bodyB = p.body,
-                }
-                strength = lj_pot(bodyA, bodyB)
-                return {
-                    x: (bodyA.position.x - bodyB.position.x) * (0.000001 * strength),
-                    y: (bodyA.position.y - bodyB.position.y) * (0.000001 * strength),
-                },
-              }
-    
-            ]
-          }
-        
+        // plugin: {
+        //   attractors: [
+        //     function(p.body, prev.body) {
+        //       if (attract) {
+        //           bodyA = p.body;
+        //           bodyB = prev.body;
+        //       }
+        //       else {
+        //           bodyA = prev.body,
+        //           bodyB = p.body,
+        //       }
+        //       strength = lj_pot(bodyA, bodyB)
+        //       return {
+        //           x: (bodyA.position.x - bodyB.position.x) * (0.000001 * strength),
+        //           y: (bodyA.position.y - bodyB.position.y) * (0.000001 * strength),
+        //       },
+        //     }
+  
+        //   ]
+        // }
+      
     };
       var constraint = Constraint.create(options);
       World.add(world, constraint);
@@ -266,34 +231,8 @@ function Particle(x, y, r, fixed) {
     prev = p;
   }
 
-  //boundaries.push(new Boundary(200, height, width, 50, 0));
-
-
-//   for (var x = 20; x < 380; x += 40) {
-//     var p1 = new Particle(x, 100, 10);
-//     particles.push(p1);
-//   }
-
-// var p1 = new Particle(200, 100, 10);
-// // var p2 = new Particle(200, 100, 5);
-
-// var option = {
-//     bodyA: p1.body,
-//     bodyB: p2.body,
-//     length: 50,
-//     stiffness: 0.4
-//   }
-
-// var constraint2 = Constraint.create(option);
-// World.add(world, constraint2);
-
-// //var line = (particles[0].body.position.x, particles[0].body.position.y, particles[1].body.position.x, particles[1].body.position.y)
-  
-//   //Composite.add(world, p1, p2);
-//   particles.push(p1, p2);
-
 // Create two bodies and a ground
-let shape1 = Bodies.circle(350, 250, 45, shape1options);
+let shape1 = Bodies.circle(350, 250, 45); //shape1options
 let shape2 = Bodies.circle(250, 230, 55);
 let ground = Bodies.rectangle(425, 610, 850, 60, { isStatic: true });
 let border1 = Bodies.rectangle(425,5, 850, 60, { isStatic: true });
@@ -314,7 +253,7 @@ const mouseConstraintOptions = {
 let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
 // Add bodies to the world
-Composite.add(world, [shape1, shape2, ground, border1, border2, border3, mouseConstraint, stack1]);
+Composite.add(world, [shape1, shape2, ground, border1, border2, border3, mouseConstraint]);
 
 Events.on(engine, 'afterUpdate', function() {
     if (!mouse.position.x) {
