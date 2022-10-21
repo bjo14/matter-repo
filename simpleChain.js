@@ -109,15 +109,21 @@ function lj_pot(body1, body2) {
 let circleProperties = {
     plugin: {
         attractors: [
-            function (bodyA, bodyB) {
-                let strength = attractStrength // lj_pot(bodyA, bodyB)
-                console.log(strength)
+            function(otherBody, mainBody) {
+                if (attractStrength >= 0) {
+                    bodyA = otherBody;
+                    bodyB = mainBody;
+                }
+                else {
+                    bodyA = mainBody;
+                    bodyB = otherBody;
+                }
+                let strength = Math.abs(attractStrength) // lj_pot(bodyA, bodyB)
                 return {
                     x: (bodyA.position.x - bodyB.position.x) * (0.000001 * strength),
                     y: (bodyA.position.y - bodyB.position.y) * (0.000001 * strength),
                 };
             }
-
         ]
     }
 }
