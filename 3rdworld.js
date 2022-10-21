@@ -195,34 +195,34 @@ function Particle(x, y, r, fixed) {
     particles.push(p);
 
 //Connecting the particles to each other
-
+  
     if (prev) {
       var options = {
         bodyA: p.body,
         bodyB: prev.body,
         length: 20,
         stiffness: 0.4, 
-        // plugin: {
-        //   attractors: [
-        //     function(p.body, prev.body) {
-        //       if (attract) {
-        //           bodyA = p.body;
-        //           bodyB = prev.body;
-        //       }
-        //       else {
-        //           bodyA = prev.body,
-        //           bodyB = p.body,
-        //       }
-        //       strength = lj_pot(bodyA, bodyB)
-        //       return {
-        //           x: (bodyA.position.x - bodyB.position.x) * (0.000001 * strength),
-        //           y: (bodyA.position.y - bodyB.position.y) * (0.000001 * strength),
-        //       },
-        //     }
-  
-        //   ]
-        // }
-      
+        plugin: {
+             attractors: [
+               function(p, prev) {
+                 if (attract) {
+                     bodyA = p.body;
+                     bodyB = prev.body;
+                 }
+                 else {
+                  bodyA = prev.body,
+                  bodyB = p.body
+                 }
+                 strength = lj_pot(bodyA, bodyB)
+                 return {
+                     x: (bodyA.position.x - bodyB.position.x) * (0.000001 * strength),
+                     y: (bodyA.position.y - bodyB.position.y) * (0.000001 * strength)
+                 }
+               }
+     
+             ]
+           }
+          
     };
       var constraint = Constraint.create(options);
       World.add(world, constraint);
@@ -232,7 +232,7 @@ function Particle(x, y, r, fixed) {
   }
 
 // Create two bodies and a ground
-let shape1 = Bodies.circle(350, 250, 45); //shape1options
+let shape1 = Bodies.circle(350, 250, 45, shape1options); //shape1options
 let shape2 = Bodies.circle(250, 230, 55);
 let ground = Bodies.rectangle(425, 610, 850, 60, { isStatic: true });
 let border1 = Bodies.rectangle(425,5, 850, 60, { isStatic: true });
