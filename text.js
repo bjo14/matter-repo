@@ -7,10 +7,19 @@ var Engine = Matter.Engine,
     Composites = Matter.Composites,
     MouseConstraint = Matter.MouseConstraint,
     Events = Matter.Events,
-    Mouse = Matter.Mouse;
+    Mouse = Matter.Mouse,
+    Common = Matter.Common,
+    Body = Matter.Body;
+
+Matter.use(
+    'matter-attractors' // PLUGIN_NAME
+    );
+
 
 // create an engine
 var engine = Engine.create();
+
+engine.world.gravity.scale = 0;
 
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
@@ -61,47 +70,53 @@ let shapeoptions = {
 }
 
 // categories
-var categories = 0x0001,
-    pinkCategory = 0x0003,
-    blueCategory = 0x0005;
+// var categories = 0x0001,
+//     pinkCategory = 0x0003,
+//     blueCategory = 0x0005,
+//     whiteCategory = 0x0007;
 
-var pinkColor = '#ffc0cb',
-    blueColor = '#add8e6';
+// var pinkColor = '#ffc0cb',
+//     blueColor = '#add8e6',
+//     whiteColor = '#ffffff';
 
-Composite.add(engine.world, Composites.stack(100, 150, 3, 3, 12, 12, function(x, y, row){
-        var category = pinkCategory, color = pinkColor;
+// Composite.add(engine.world, Composites.stack(100, 150, 3, 3, 12, 12, function(x, y, row){
+//         var category = whiteCategory, color = whiteColor;
 
-//add blueColor
-        return Bodies.polygon(x, y, 10, 45, {
-            collisionFilter: {
-                category: category
-            },
-            render: {
-                strokeStyle: color,
-                fillStyle: 'fill',
-                lineWidth: 3
-            }
-        })
+//         if (row > 3) {
+//             category = blueCategory
+//             color = blueColor;
+//         }
 
-}));
+//         return Bodies.polygon(x, y, 10, 45, {
+//             collisionFilter: {
+//                 category: category
+//             },
+//             render: {
+//                 strokeStyle: color,
+//                 fillStyle: 'transparent',
+//                 lineWidth: 3
+//             }
+//         })
 
-Composite.add(engine.world, Bodies.polygon(150, 60, 10, 45, {
-    collisionFilter: {
-        mask: categories | pinkCategory
-    },
-    render: {
-        fillStyle: pinkColor
-    }
-}));
+// }));
 
-Composite.add(engine.world, Bodies.polygon(150, 60, 10, 45, {
-    collisionFilter: {
-        mask: categories | blueCategory
-    },
-    render: {
-        fillStyle: blueColor
-    }
-}));
+// Composite.add(engine.world, Bodies.circle(150, 60, 10, {
+//     collisionFilter: {
+//         mask: categories | pinkCategory
+//     },
+//     render: {
+//         fillStyle: pinkColor
+//     }
+// }));
+
+// Composite.add(engine.world, Bodies.circle(150, 60, 10, {
+//     collisionFilter: {
+//         mask: categories | blueCategory
+//     },
+//     render: {
+//         fillStyle: blueColor
+//     }
+// }));
 
 // create two boxes and a ground
 var boxA = Bodies.rectangle(400, 200, 80, 80);
@@ -126,18 +141,67 @@ var mouseConstraint = MouseConstraint.create(engine, mouseConstraintOptions);
 boxA.isStatic = true;
 
 // add all of the bodies to the world
-Composite.add(engine.world, [boxA, boxB, ground, shape, shape2, mouseConstraint]);
+//Composite.add(engine.world, [boxA, boxB, ground, shape, shape2, mouseConstraint]);
+Composite.add(engine.world, [ground]);
 
 frameRate = 1000 / 60;
 
-Events.on(mouseConstraint, 'enddrag', function (event){
-    event.body.isStatic = true
-});
+// Events.on(mouseConstraint, 'enddrag', function (event){
+//     event.body.isStatic = true
+// });
 
-Events.on(mouseConstraint, 'startdrag', function (event) {
-    if (event.body !== ground) {
-        event.body.isStatic = false;
+// Events.on(mouseConstraint, 'startdrag', function (event) {
+//     if (event.body !== ground) {
+//         event.body.isStatic = false;
+//     }
+// });
+
+  // create a body with an attractor
+  var attractiveBody = Bodies.circle(
+    canvas.width / 2,
+    canvas.height / 2,
+    50, 
+    {
+    isStatic: true,
+
+    // example of an attractor function that 
+    // returns a force vector that applies to bodyB
+    plugin: {
+      attractors: [
+        function(bodyA, bodyB) {
+          return {
+            x: (bodyA.position.x - bodyB.position.x) * 1e-6,
+            y: (bodyA.position.y - bodyB.position.y) * 1e-6,
+          };
+        }
+      ]
     }
+  });
+
+  Composite.add(engine.world, attractiveBody);
+
+  // add some bodies that to be attracted
+  for (var i = 0; i < 150; i += 1) {
+    var body = Bodies.polygon(
+      Common.random(0, canvas.width), 
+      Common.random(0, canvas.height),
+      Common.random(1, 5),
+      Common.random() > 0.9 ? Common.random(15, 25) : Common.random(5, 10)
+    );
+
+    Composite.add(engine.world, body);
+  }
+
+  Events.on(engine, 'afterUpdate', function() {
+    if (!mouse.position.x) {
+      return;
+    }
+
+    // smoothly move the attractor body towards the mouse
+    Body.translate(attractiveBody, {
+        x: (mouse.position.x - attractiveBody.position.x) * 0.25,
+        y: (mouse.position.y - attractiveBody.position.y) * 0.25
+    });
 });
 
 // Create game loop (because Matter.Runner doesn't work with node.js)
