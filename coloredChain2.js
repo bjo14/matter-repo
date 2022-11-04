@@ -60,11 +60,17 @@ function dist(body1, body2) {
     return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 }
 
-let epsilon = .2
-let sigma = 1
-function lj_pot(body1, body2) {
-    let distance = dist(body1, body2)
-    return distance * epsilon * attractStrength
+const betweenCircleNumPixels = 50
+function lj_pot(body1, body2, epsilon = 1, sigma = 100) {
+    if (body1 === body2) {
+        return 0
+    }
+    // TODO: Deal with .00001 which is just a hack to avoid divide by 0 nans
+    // TODO: Scale everything by pixel
+    let distance = (dist(body1, body2) + .0001) / betweenCircleNumPixels
+    let lj = 4 * epsilon * ((Math.pow(sigma/distance, 12)) - Math.pow(sigma/distance, 6))
+    console.log(lj)
+    return lj
 }
 
 // Molecule types (calling them nucleotides for a snappy name, but this is generic)
@@ -75,8 +81,19 @@ function randIndex(length) {
 function randNucleotide() {
     return nucleotides[randIndex(nucleotides.length)]
 }
-function randNucleotide2() {
-    return nucleotides[randIndex(nucleotides.length)]
+
+/**
+ * For a given pair of molecule types, return epsilon and sigma for leanord jones
+ */
+function interMolecularStrength(type1, type2) {
+    // console.log(type1, type2)
+    if (type1 === "A" && type2 ==="B") {
+       return [.1, .1]
+    } else if (type1 === "A" && type2 === "C") {
+        return [-.10, -.10]
+    } else {
+        return [0, 0]
+    }
 }
 
 // Set up circles
@@ -84,7 +101,9 @@ let circleProperties = {
     plugin: {
         attractors: [
             function(otherBody, mainBody) {
-                let strength = attractStrength // lj_pot(bodyA, bodyB)
+                let bondStrength = interMolecularStrength(otherBody.n_type, mainBody.n_type)
+                // console.log("Bond strength:", bondStrength);
+                let strength = lj_pot(mainBody, otherBody, bondStrength[0], bondStrength[1])
                 return {
                     x: (mainBody.position.x - otherBody.position.x) * (0.000001 * strength),
                     y: (mainBody.position.y - otherBody.position.y) * (0.000001 * strength),
@@ -97,6 +116,7 @@ let numBodies = 10
 var stack1 = Composites.stack(5, 6, 1, numBodies, 0, 0.5, function (x, y) {
     return Bodies.circle(25, 23, 25, circleProperties);
 });
+// TODO: Add one more type, and make type names match colors
 stack1.bodies.forEach(body => {
     body.n_type = randNucleotide()
     if (body.n_type) {
@@ -111,18 +131,25 @@ stack1.bodies.forEach(body => {
     }
 })
 
-let colorChange = document.getElementById('clickColor');
-
-document.addEventListener("click", function randNucleotide(){
-    colorChange.style.color = 'orange'
-});
+// TODO: Figure out mouse stuff. Goal for now is to know what body we have clicked on
+const mouse = Mouse.create(canvas);
+const mouseConstraintOptions = {
+    mouse: mouse,
+    constraint: {
+        stiffness: 0.2,
+        render: {
+            visible: false
+        }
+    }
+}
+let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
 // Ground and border
 let ground = Bodies.rectangle(425, 610, 850, 60, {isStatic: true});
 let border1 = Bodies.rectangle(425, 5, 850, 60, {isStatic: true});
 let border2 = Bodies.rectangle(25, 306, 80, 542, {isStatic: true});
 let border3 = Bodies.rectangle(835, 306, 80, 542, {isStatic: true});
-Composite.add(world, [ground, border1, border2, border3]);
+Composite.add(world, [ground, border1, border2, border3, mouseConstraint]);
 
 // Chain of molecules
 Composites.chain(stack1, 0.5, 0, -0.5, 0, {stiffness: 1, length: 1, render: {type: 'line'}});
