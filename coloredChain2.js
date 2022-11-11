@@ -60,7 +60,7 @@ function dist(body1, body2) {
     return Math.sqrt(Math.pow((x1 - x2), 2) + Math.pow((y1 - y2), 2));
 }
 
-const betweenCircleNumPixels = 50
+const betweenCircleNumPixels = 55
 function lj_pot(body1, body2, epsilon = 1, sigma = 100) {
     if (body1 === body2) {
         return 0
@@ -69,12 +69,12 @@ function lj_pot(body1, body2, epsilon = 1, sigma = 100) {
     // TODO: Scale everything by pixel
     let distance = (dist(body1, body2) + .0001) / betweenCircleNumPixels
     let lj = 4 * epsilon * ((Math.pow(sigma/distance, 12)) - Math.pow(sigma/distance, 6))
-    console.log(lj)
+    //console.log(lj)
     return lj
 }
 
 // Molecule types (calling them nucleotides for a snappy name, but this is generic)
-let nucleotides = ["A","B", "C"]
+let nucleotides = ["Red","Blue", "Yellow"]
 function randIndex(length) {
     return Math.floor(Math.random() * length);
 }
@@ -87,10 +87,10 @@ function randNucleotide() {
  */
 function interMolecularStrength(type1, type2) {
     // console.log(type1, type2)
-    if (type1 === "A" && type2 ==="B") {
-       return [.1, .1]
-    } else if (type1 === "A" && type2 === "C") {
-        return [-.10, -.10]
+    if (type1 === "Red" && type2 ==="Blue") {
+       return [.35, .35]
+    } else if (type1 === "Red" && type2 === "Yellow") {
+        return [-.35, -.35]
     } else {
         return [0, 0]
     }
@@ -112,19 +112,23 @@ let circleProperties = {
         ]
     }
 }
-let numBodies = 10
+let numBodies = 4
 var stack1 = Composites.stack(5, 6, 1, numBodies, 0, 0.5, function (x, y) {
     return Bodies.circle(25, 23, 25, circleProperties);
 });
 // TODO: Add one more type, and make type names match colors
+let sequence = ["Red", "Red", "Red", "Blue"]
+let i = 0;
 stack1.bodies.forEach(body => {
-    body.n_type = randNucleotide()
+    //console.log(body.id);
+    // body.n_type = randNucleotide()
+    body.n_type = sequence[i++]
     if (body.n_type) {
-        if (body.n_type === 'A') {
+        if (body.n_type === 'Red') {
             body.render.fillStyle = 'red'
-        } else if (body.n_type === 'B') {
+        } else if (body.n_type === 'Blue') {
             body.render.fillStyle = 'blue'
-        } else if (body.n_type === 'C') {
+        } else if (body.n_type === 'Yellow') {
             body.render.fillStyle = 'yellow'
         }
 
@@ -132,7 +136,7 @@ stack1.bodies.forEach(body => {
 })
 
 // TODO: Figure out mouse stuff. Goal for now is to know what body we have clicked on
-const mouse = Mouse.create(canvas);
+const mouse = Mouse.create(render.canvas);
 const mouseConstraintOptions = {
     mouse: mouse,
     constraint: {
@@ -143,6 +147,16 @@ const mouseConstraintOptions = {
     }
 }
 let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
+
+//Work in progress: mouse interaction
+    document.addEventListener('click', function(event){
+        console.log(mouseConstraint)
+        if (mouseConstraint.body != null) {
+             mouseConstraint.body.render.fillStyle = 'pink'
+             console.log('hi');
+        }
+    })
+
 
 // Ground and border
 let ground = Bodies.rectangle(425, 610, 850, 60, {isStatic: true});
