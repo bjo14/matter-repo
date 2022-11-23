@@ -74,7 +74,7 @@ function lj_pot(body1, body2, epsilon = 1, sigma = 100) {
 }
 
 // Molecule types (calling them nucleotides for a snappy name, but this is generic)
-let nucleotides = ["Red","Blue", "Yellow"]
+let nucleotides = ["Red","Blue", "Yellow", "Green"]
 function randIndex(length) {
     return Math.floor(Math.random() * length);
 }
@@ -86,10 +86,20 @@ function randNucleotide() {
  * For a given pair of molecule types, return epsilon and sigma for leanord jones
  */
 function interMolecularStrength(type1, type2) {
-    // console.log(type1, type2)
+    console.log(type1, type2)
     if (type1 === "Red" && type2 ==="Blue") {
-       return [.35, .35]
+       return [-.35, -.35]
+    } else if (type1 === "Yellow" && type2 === "Blue") {
+        return [.35, .35]
+    } else if (type1 === "Red" && type2 === "Green") {
+        return [.35, .35]
     } else if (type1 === "Red" && type2 === "Yellow") {
+        return [-.35, -.35]
+    } else if (type1 === "Green" && type2 === "Yellow") {
+        return [-.35, -.35]
+    } else if (type1 === "Green" && type2 === "Blue") {
+        return [-.35, -.35]
+    } else if (type1 === "Green" && type2 === "Blue") {
         return [-.35, -.35]
     } else {
         return [0, 0]
@@ -102,27 +112,28 @@ let circleProperties = {
         attractors: [
             function(otherBody, mainBody) {
                 let bondStrength = interMolecularStrength(otherBody.n_type, mainBody.n_type)
-                // console.log("Bond strength:", bondStrength);
+                //console.log("Bond strength:", bondStrength);
                 let strength = lj_pot(mainBody, otherBody, bondStrength[0], bondStrength[1])
+                //console.log(strength);
                 return {
-                    x: (mainBody.position.x - otherBody.position.x) * (0.000001 * strength),
-                    y: (mainBody.position.y - otherBody.position.y) * (0.000001 * strength),
+                    x: (mainBody.position.x - otherBody.position.x) * (attractStrength * strength * 0.05),
+                    y: (mainBody.position.y - otherBody.position.y) * (attractStrength * strength * 0.05),
                 };
             }
         ]
     }
 }
-let numBodies = 4
+let numBodies = 6
 var stack1 = Composites.stack(5, 6, 1, numBodies, 0, 0.5, function (x, y) {
     return Bodies.circle(25, 23, 25, circleProperties);
 });
 // TODO: Add one more type, and make type names match colors
-let sequence = ["Red", "Red", "Red", "Blue"]
+let sequence = ["Yellow", "Red", "Red", "Green", "Green", "Blue"]
 let i = 0;
 stack1.bodies.forEach(body => {
     //console.log(body.id);
     // body.n_type = randNucleotide()
-    body.n_type = sequence[i++]
+   body.n_type = sequence[i++]
     if (body.n_type) {
         if (body.n_type === 'Red') {
             body.render.fillStyle = 'red'
@@ -130,6 +141,8 @@ stack1.bodies.forEach(body => {
             body.render.fillStyle = 'blue'
         } else if (body.n_type === 'Yellow') {
             body.render.fillStyle = 'yellow'
+        } else if (body.n_type === 'Green') {
+            body.render.fillStyle = 'green'
         }
 
     }
@@ -150,7 +163,7 @@ let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
 //Work in progress: mouse interaction
     document.addEventListener('click', function(event){
-        console.log(mouseConstraint)
+       // console.log(mouseConstraint)
         if (mouseConstraint.body != null) {
              mouseConstraint.body.render.fillStyle = 'pink'
              console.log('hi');
