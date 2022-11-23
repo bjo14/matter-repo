@@ -61,7 +61,7 @@ function dist(body1, body2) {
 }
 
 const betweenCircleNumPixels = 55
-function lj_pot(body1, body2, epsilon = 1, sigma = 100) {
+function lj_pot(body1, body2, epsilon, sigma) {
     if (body1 === body2) {
         return 0
     }
@@ -86,7 +86,7 @@ function randNucleotide() {
  * For a given pair of molecule types, return epsilon and sigma for leanord jones
  */
 function interMolecularStrength(type1, type2) {
-    console.log(type1, type2)
+    //console.log(type1, type2)
     if (type1 === "Red" && type2 ==="Blue") {
        return [-.35, -.35]
     } else if (type1 === "Yellow" && type2 === "Blue") {
@@ -123,12 +123,12 @@ let circleProperties = {
         ]
     }
 }
-let numBodies = 6
-var stack1 = Composites.stack(5, 6, 1, numBodies, 0, 0.5, function (x, y) {
+
+let sequence = ["Red", "Red", "Red", "Green", "Green", "Green"]
+var stack1 = Composites.stack(5, 6, 1, sequence.length, 0, 0.5, function (x, y) {
     return Bodies.circle(25, 23, 25, circleProperties);
 });
-// TODO: Add one more type, and make type names match colors
-let sequence = ["Yellow", "Red", "Red", "Green", "Green", "Blue"]
+
 let i = 0;
 stack1.bodies.forEach(body => {
     //console.log(body.id);
@@ -163,7 +163,7 @@ let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
 //Work in progress: mouse interaction
     document.addEventListener('click', function(event){
-       // console.log(mouseConstraint)
+       //console.log(mouseConstraint)
         if (mouseConstraint.body != null) {
              mouseConstraint.body.render.fillStyle = 'pink'
              console.log('hi');
