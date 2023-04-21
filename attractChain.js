@@ -48,7 +48,7 @@ canvas.height = 650;
 let sliderValue = document.getElementById('mySlider');
 let attractStrength = sliderValue.value
 sliderValue.addEventListener('input', function () {
-    attractStrength = sliderValue.value;
+    sliderAmount = sliderValue.value;
 })
 
 // Molecule types (calling them nucleotides for a snappy name, but this is generic)
@@ -102,8 +102,8 @@ let circleProperties = {
                         otherBody = type2;
                     }
                 return {
-                    x: (mainBody.position.x - otherBody.position.x) * (attractStrength * 0.000001),
-                    y: (mainBody.position.y - otherBody.position.y) * (attractStrength * 0.000001),
+                    x: (mainBody.position.x - otherBody.position.x) * (sliderAmount * 0.000001),
+                    y: (mainBody.position.y - otherBody.position.y) * (sliderAmount * 0.000001),
                 };
             }
         ]

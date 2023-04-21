@@ -81,7 +81,7 @@ let sliderValue = document.getElementById('mySlider');
 let attractStrength = sliderValue.value;
 
 sliderValue.addEventListener('input', function () {
-    attractStrength = sliderValue.value;
+    sliderAmount = sliderValue.value;
 })
 
 let shape1options = {
@@ -97,8 +97,8 @@ let shape1options = {
                 bodyB = otherBody;
             }
             return {
-              x: (bodyA.position.x - bodyB.position.x) * (0.000001 * attractStrength),
-              y: (bodyA.position.y - bodyB.position.y) * (0.000001 * attractStrength),
+              x: (bodyA.position.x - bodyB.position.x) * (0.000001 * sliderAmount),
+              y: (bodyA.position.y - bodyB.position.y) * (0.000001 * sliderAmount),
             };
           }
 

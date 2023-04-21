@@ -11,6 +11,7 @@ let Mouse = Matter.Mouse
 var Body = Matter.Body
 let World = Matter.World
 let Boundary = Matter.Boundary
+let Bounds = Matter.Bounds 
 
 // Plugin
 Matter.use(
@@ -92,11 +93,11 @@ function interMolecularStrength(type1, type2) {
 
 // Set up circles with attraction/repulsion
 let circleProperties = {
-    render: {
-        fillStyle: 'white',
-        strokeStyle: 'black',
-        lineWidth: 1
-    },
+    // render: {
+    //     fillStyle: 'white',
+    //     strokeStyle: 'black',
+    //     lineWidth: 1
+    // },
     plugin: {
         attractors: [
             function(otherBody, mainBody) {
@@ -121,37 +122,12 @@ let circleProperties = {
 //Need to further integrate new function with stack (work in progress)
 
 let sequence = ["Green", "Green", "Green", "Blue", "Blue"]
-// const clickColors = document.querySelectorAll('HTML');
-// const colors = ["Green", "Blue", "Yellow", "Red"];
-// let colorIndex = 0;
+
 
 var stack1 = Composites.stack(5, 6, 1, sequence.length, 0, 0.5, function (x, y) {
-    // clickColors.forEach(circle => {
-    //     circle.addEventListener('click', () => {
-    //       const currentColor = colors[colorIndex];
-    //       stack1.bodies.forEach(body => {
-    //         body.render.fillStyle = currentColor;
-    //       });
-    //       colorIndex = (colorIndex + 1) % colors.length;
-    //     });
-    //   });
-    return Bodies.circle(25, 23, 25, circleProperties)
+    let shapes = Bodies.circle(25, 23, 25, circleProperties);
+    return shapes
 });
-
-//Function to change colors of circle elements (in progress)
-const clickColors = document.querySelectorAll('HTML');
-const colors = ["Red","Blue", "Yellow", "Green"];
-let colorIndex = 0;
-
-clickColors.forEach(colorClick => {
-    colorClick.addEventListener('click', () => {
-      const currentColor = colors[colorIndex];
-      stack1.bodies.forEach(body => {
-        body.render.fillStyle = currentColor;
-      });
-      colorIndex = (colorIndex + 1) % colors.length;
-    });
-  });
 
 //Old function to assign color elements to circles
 let i = 0;
@@ -172,6 +148,11 @@ const mouseConstraintOptions = {
 }
 let mouseConstraint = MouseConstraint.create(world, mouseConstraintOptions);
 
+//Function to change colors of circle elements (in progress)
+
+
+
+
 // Ground and border
 let ground = Bodies.rectangle(425, 610, 850, 60, {isStatic: true});
 let border1 = Bodies.rectangle(425, 5, 850, 60, {isStatic: true});
@@ -189,6 +170,38 @@ Composite.add(stack1, Constraint.create({
     stiffness: 0.5
 }));
 Composite.add(world, [stack1]);
+
+const stackBodies = Composite.allBodies(stack1);
+
+// Loop through the bodies and log their IDs
+// for (let i = 0; i < bodies.length; i++) {
+//   console.log("Shape " + i + " ID: " + bodies[i].id);
+// }
+function shapeID () {
+for (let i = 0; i < stackBodies.length; i++) {
+    console.log("Shape " + i + " ID: " + stackBodies[i].id);
+  }
+console.log(stackBodies[i].id)
+}
+
+let colorArray = ["pink", "blue", "purple", "red"]; 
+let colorIndex = 0;
+function changeColor(shape) {
+    console.log(colorIndex)
+    let color = colorArray[colorIndex];
+    shape.render.fillStyle = color;
+    colorIndex = (colorIndex + 1) % colorArray.length;
+}
+
+//Testing to see mouse and shape interaction
+Events.on(mouseConstraint, 'mousedown', function(event) {
+    let position = event.mouse.position;
+    if (Bounds.contains(stack1.bounds, position)) {
+        changeColor(stack1.bodies.id[2])
+        console.log(stack1.bodies.id[2])
+    }     
+});
+
 
 // Create game loop (because Matter.Runner doesn't work with node.js)
 frameRate = 1000 / 60;

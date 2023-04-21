@@ -46,9 +46,9 @@ canvas.height = 650;
 
 // Slider bar
 let sliderValue = document.getElementById('mySlider');
-let attractStrength = sliderValue.value
+let sliderAmount = sliderValue.value
 sliderValue.addEventListener('input', function () {
-    attractStrength = sliderValue.value;
+    sliderAmount = sliderValue.value;
 })
 
 // Leanord Jones Potentials
@@ -116,8 +116,8 @@ let circleProperties = {
                 let strength = lj_pot(mainBody, otherBody, bondStrength[0], bondStrength[1])
                 //console.log(strength);
                 return {
-                    x: (mainBody.position.x - otherBody.position.x) * (attractStrength * strength * 0.05),
-                    y: (mainBody.position.y - otherBody.position.y) * (attractStrength * strength * 0.05),
+                    x: (mainBody.position.x - otherBody.position.x) * (sliderAmount * strength * 0.05),
+                    y: (mainBody.position.y - otherBody.position.y) * (sliderAmount * strength * 0.05),
                 };
             }
         ]

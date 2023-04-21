@@ -110,7 +110,8 @@ let circleProperties = {
 //["Red", "Red", "Yellow", "Yellow"], ["Yellow", "Yellow", "Green", "Green"], ["Blue", "Blue", "Green", "Green"]
 //let sequence = ["Red", "Red", "Red", "Green", "Green", "Green", "Blue", "Blue", "Yellow", "Yellow"]
 
-let sequence = ["Red", "Green","Red", "Green", "Yellow", "Green", "Red", "Blue", "Red", "Blue"]
+//let sequence = ["Red", "Green","Red", "Green", "Yellow", "Green", "Red", "Blue", "Red", "Blue"]
+let sequence = ["Red", "Red", "Red", "Blue", "Blue", "Blue"]
 
 var stack1 = Composites.stack(5, 6, 1, sequence.length, 0, 0.5, function (x, y) {
     return Bodies.circle(25, 23, 25, circleProperties);
