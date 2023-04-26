@@ -36,13 +36,13 @@ Render.run(render);
  });
 Composite.add(world, mouseConstraint);
 
-//Matter.Composites.stack(xx, yy, columns, rows, columnGap, rowGap, callback)
+// Creates a stack of circles
 let stack = Composites.stack(44, 44, 2, 2, 0.1, 0.1, function(){
     return Bodies.circle(235, 150, 25);
 })
 //console.log(stack);
 
-//Matter.Composites.chain(composite, xOffsetA, yOffsetA, xOffsetB, yOffsetB, options)
+// Creates constraints between each circle created in the stack function
 let chain = Composites.chain(stack, 0.5, 0.2, 0.1, 0.5);
 
 // Create two bodies and barriers
@@ -55,7 +55,7 @@ let border3 = Bodies.rectangle(835, 306, 80, 542, {isStatic: true});
 // Add bodies to the world
 Composite.add(world, [shape1, shape2, ground, border2, border3, stack]);
 
-//function that changes color of shapes
+// Function that changes color of shapes
 let colorArray = ["pink", "blue", "purple", "red"];
 let colorIndex = 0;
 function changeColor(shape) {
@@ -65,7 +65,7 @@ function changeColor(shape) {
     colorIndex = (colorIndex + 1) % colorArray.length;
 }
 
-//Function that changes the color of the circles in the stack
+// Mouse handler that executes color function when circle is clicked (for chain)
 stack.bodies.forEach(function(body) {
     Events.on(mouseConstraint, 'mousedown', function(event) {
         let position = event.mouse.position;
@@ -76,7 +76,7 @@ stack.bodies.forEach(function(body) {
     });
 });
 
-//Testing to see mouse and shape interaction while also changing shape color
+// Mouse handler that executes color function when circle is clicked (for shape1 and shape2)
 Events.on(mouseConstraint, 'mousedown', function(event) {
     let position = event.mouse.position;
     if (Bounds.contains(shape1.bounds, position)) {
