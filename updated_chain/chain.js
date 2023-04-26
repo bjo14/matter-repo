@@ -66,11 +66,11 @@ function changeColor(shape) {
 }
 
 //Function that changes the color of the circles in the stack
-stack.bodies.forEach(function(circles) {
+stack.bodies.forEach(function(body) {
     Events.on(mouseConstraint, 'mousedown', function(event) {
         let position = event.mouse.position;
-        if (Bounds.contains(circles.bounds, position)) {
-            changeColor(circles);
+        if (Bounds.contains(body.bounds, position)) {
+            changeColor(body);
             //console.log(circles);
         }
     });
