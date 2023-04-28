@@ -100,6 +100,7 @@ function changeColor(shape) {
     console.log(colorIndex)
     let color = colorArray[colorIndex];
     shape.render.fillStyle = color;
+    shape.nType = color
     colorIndex = (colorIndex + 1) % colorArray.length;
 }
 
@@ -109,7 +110,7 @@ stack.bodies.forEach(function(body) {
         let position = event.mouse.position;
         if (Bounds.contains(body.bounds, position)) {
             changeColor(body);
-            //console.log(body);
+            console.log(body);
         }
     });
 });
