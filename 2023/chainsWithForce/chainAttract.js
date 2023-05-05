@@ -40,6 +40,7 @@ sliderValue.addEventListener('input', function () {
     sliderAmount = sliderValue.value;
 })
 
+// Color Interactions
 function interMolecularStrength(type1, type2) {
     console.log(type1, type2)
     if ((type1 === "Red" && type2 === "Blue") || (type1 === "Blue" && type2 === "Red")) {
@@ -114,8 +115,6 @@ stack.bodies.forEach(function(body) {
         }
     });
 });
-
-
 
 // Creates constraints between each circle created in the stack function
 let chain = Composites.chain(stack, 0.5, 0.2, 0.1, 0.5,{stiffness: 1, length: 1, render: {type: 'line'}});
