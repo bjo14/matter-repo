@@ -91,7 +91,10 @@ Composite.add(world, mouseConstraint);
 
 // Creates a stack of circles
 let stack = Composites.stack(44, 44, 2, 2, 0.1, 0.1, function(){
-    return Bodies.circle(235, 150, 25, shapeAttract);
+    let circleBodies = Bodies.circle(235, 150, 25, shapeAttract);
+    circleBodies.render.fillStyle = "White";
+    circleBodies.nType = "White";
+    return circleBodies;
 })
 
 // Function that changes color of shapes
@@ -110,14 +113,19 @@ stack.bodies.forEach(function(body) {
     Events.on(mouseConstraint, 'mousedown', function(event) {
         let position = event.mouse.position;
         if (Bounds.contains(body.bounds, position)) {
+            drag = true;
+        }
+    });
+    Events.on(mouseConstraint, 'mouseup', function(event) {
+        let position = event.mouse.position;
+        if (Bounds.contains(body.bounds, position)) {
             changeColor(body);
-            console.log(body);
         }
     });
 });
 
 // Creates constraints between each circle created in the stack function
-let chain = Composites.chain(stack, 0.5, 0.2, 0.1, 0.5,{stiffness: 1, length: 1, render: {type: 'line'}});
+let chain = Composites.chain(stack, 0.5, 0.2, 0.1, 0.5,{stiffness: 0.5, length: 1, render: {type: 'line'}});
 Composite.add(stack, Constraint.create({
     bodyB: stack.bodies[0],
     pointA: {x: 60, y: 40},
@@ -133,7 +141,6 @@ let border3 = Bodies.rectangle(835, 306, 80, 542, {isStatic: true});
 
 // Add bodies to the world
 Composite.add(world, [ground, border1, border2, border3, stack]);
-
 
 frameRate = 1000 / 60;
 
