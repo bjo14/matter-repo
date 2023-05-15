@@ -110,12 +110,6 @@ function changeColor(shape) {
 
 // Mouse handler that executes color function when circle is clicked
 stack.bodies.forEach(function(body) {
-    Events.on(mouseConstraint, 'mousedown', function(event) {
-        let position = event.mouse.position;
-        if (Bounds.contains(body.bounds, position)) {
-            drag = true;
-        }
-    });
     Events.on(mouseConstraint, 'mouseup', function(event) {
         let position = event.mouse.position;
         if (Bounds.contains(body.bounds, position)) {
